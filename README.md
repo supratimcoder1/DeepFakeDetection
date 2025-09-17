@@ -107,7 +107,3 @@ The frontend consists of two pages:
 - Deployable Docker image for production use.
 
 ---
-
-## 📜 License
-
-This project is released under the MIT License.
