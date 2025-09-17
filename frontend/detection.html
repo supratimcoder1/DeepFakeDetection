@@ -1,0 +1,1861 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepGuard AI - Detection Interface</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #00f5ff, #ff00aa, #8000ff, #00ff88);
+            --neural-blue: #00d4ff;
+            --plasma-purple: #9d4edd;
+            --cyber-pink: #ff006e;
+            --matrix-green: #00ff88;
+            --warning-red: #ff073a;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000012;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            color: #ffffff;
+            cursor: none;
+            padding: 4rem 0;
+            /* Added padding to give space at top and bottom */
+        }
+
+        /* Custom cursor */
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, var(--neural-blue) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transition: all 0.1s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--plasma-purple);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        /* Neural network background */
+        .neural-network {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .neural-node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--neural-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neural-blue);
+            animation: pulse-node 3s infinite alternate;
+        }
+
+        .neural-connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neural-blue), transparent);
+            transform-origin: left center;
+            animation: data-flow 4s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes pulse-node {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 10px var(--neural-blue);
+            }
+
+            100% {
+                transform: scale(1.5);
+                box-shadow: 0 0 20px var(--neural-blue), 0 0 40px var(--neural-blue);
+            }
+        }
+
+        @keyframes data-flow {
+            0% {
+                transform: scaleX(0);
+            }
+
+            50% {
+                transform: scaleX(1);
+            }
+
+            100% {
+                transform: scaleX(0);
+            }
+        }
+
+        /* Holographic grid */
+        .holo-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            animation: grid-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes grid-pulse {
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Matrix rain */
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            pointer-events: none;
+            opacity: 0.1;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100px;
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            color: var(--matrix-green);
+            animation: matrix-fall 10s linear infinite;
+            text-shadow: 0 0 5px var(--matrix-green);
+        }
+
+        @keyframes matrix-fall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* Status HUD */
+        .status-hud {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: grid;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .hud-element {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hud-element::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: left 0.6s ease;
+        }
+
+        .hud-element:hover::before {
+            left: 100%;
+        }
+
+        .status-online {
+            color: var(--matrix-green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .status-offline {
+            color: var(--warning-red);
+            box-shadow: 0 0 20px rgba(255, 7, 58, 0.2);
+        }
+
+        .neural-activity {
+            color: var(--neural-blue);
+            animation: data-pulse 2s infinite;
+        }
+
+        @keyframes data-pulse {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        /* Neural visualization */
+        .neural-viz {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 200px;
+            height: 60px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            z-index: 1000;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.8rem;
+        }
+
+        .neural-waves {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            height: 30px;
+            margin-top: 5px;
+        }
+
+        .wave-bar {
+            width: 3px;
+            background: var(--neural-blue);
+            border-radius: 2px;
+            animation: wave-pulse 1.5s infinite ease-in-out;
+            box-shadow: 0 0 5px var(--neural-blue);
+            height: 5px;
+        }
+
+        .wave-bar:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .wave-bar:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .wave-bar:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        .wave-bar:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+
+        .wave-bar:nth-child(6) {
+            animation-delay: 0.5s;
+        }
+
+        .wave-bar:nth-child(7) {
+            animation-delay: 0.6s;
+        }
+
+        .wave-bar:nth-child(8) {
+            animation-delay: 0.7s;
+        }
+
+        @keyframes wave-pulse {
+
+            0%,
+            100% {
+                height: 5px;
+            }
+
+            50% {
+                height: 25px;
+            }
+        }
+
+        /* Main container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            perspective: 1000px;
+        }
+
+        /* Upload sections */
+        .upload-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .upload-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(var(--neural-blue),
+                    var(--plasma-purple),
+                    var(--cyber-pink),
+                    var(--matrix-green),
+                    var(--neural-blue));
+            animation: border-rotate 8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .upload-section::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: #000012;
+            border-radius: 18px;
+            z-index: -1;
+        }
+
+        .upload-section:hover::before {
+            opacity: 1;
+        }
+
+        .upload-section:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow:
+                0 20px 40px rgba(0, 212, 255, 0.3),
+                0 0 100px rgba(157, 78, 221, 0.2);
+        }
+
+        @keyframes border-rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Section titles */
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-title::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 2px;
+            color: rgba(255, 0, 110, 0.5);
+            z-index: -1;
+            animation: glitch 0.3s infinite alternate;
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-2px);
+            }
+
+            50% {
+                transform: translateX(2px);
+            }
+
+            75% {
+                transform: translateX(-1px);
+            }
+
+            100% {
+                transform: translateX(1px);
+            }
+        }
+
+        .section-subtitle {
+            color: #8cc8ff;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* File input styling */
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .file-input-display {
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 4rem 3rem;
+            text-align: center;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background:
+                linear-gradient(#000012, #000012) padding-box,
+                var(--primary-gradient) border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-input-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                    rgba(0, 212, 255, 0.1) 0%,
+                    transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .file-input-wrapper:hover .file-input-display::before {
+            opacity: 1;
+        }
+
+        .file-input-wrapper:hover .file-input-display {
+            transform: scale(1.02);
+            box-shadow:
+                0 0 50px rgba(0, 212, 255, 0.3),
+                inset 0 0 50px rgba(157, 78, 221, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            transition: all 0.6s ease;
+            animation: icon-float 3s ease-in-out infinite;
+        }
+
+        @keyframes icon-float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(5deg);
+            }
+        }
+
+        .file-input-wrapper:hover .upload-icon {
+            transform: scale(1.2) rotate(10deg);
+            filter: drop-shadow(0 0 20px var(--neural-blue));
+        }
+
+        .upload-text {
+            font-size: 1.3rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .upload-subtext {
+            color: #8cc8ff;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Preview areas */
+        .preview-area {
+            border-radius: 20px;
+            overflow: hidden;
+            background:
+                linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(157, 78, 221, 0.05) 100%);
+            margin-bottom: 2rem;
+            position: relative;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .preview-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                repeating-linear-gradient(0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 212, 255, 0.03) 2px,
+                    rgba(0, 212, 255, 0.03) 4px);
+            animation: scan-lines 2s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scan-lines {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        .preview-placeholder {
+            color: #6b7280;
+            font-size: 1.1rem;
+            text-align: center;
+            font-family: 'Orbitron', monospace;
+            opacity: 0.7;
+        }
+
+        .preview-media {
+            max-width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            border-radius: 15px;
+            filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.3));
+            transition: all 0.6s ease;
+        }
+
+        .preview-media:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 30px rgba(157, 78, 221, 0.5));
+        }
+
+        /* Detection buttons */
+        .detect-btn {
+            width: 100%;
+            padding: 1.5rem 2rem;
+            background: var(--glass-bg);
+            color: white;
+            border: 2px solid transparent;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background:
+                linear-gradient(#000012, #000012) padding-box,
+                var(--primary-gradient) border-box;
+        }
+
+        .detect-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent);
+            transition: left 0.6s ease;
+        }
+
+        .detect-btn:hover::before {
+            left: 100%;
+        }
+
+        .detect-btn:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 15px 35px rgba(0, 212, 255, 0.4),
+                0 0 50px rgba(157, 78, 221, 0.3);
+        }
+
+        .detect-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .detect-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Loading animation */
+        .quantum-loader {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            position: relative;
+            vertical-align: middle;
+        }
+
+        .quantum-loader::before,
+        .quantum-loader::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border: 3px solid transparent;
+            border-top: 3px solid var(--neural-blue);
+            border-radius: 50%;
+            animation: quantum-spin 1s linear infinite;
+        }
+
+        .quantum-loader::after {
+            border-top: 3px solid var(--plasma-purple);
+            animation-direction: reverse;
+            animation-duration: 0.7s;
+        }
+
+        @keyframes quantum-spin {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            50% {
+                transform: rotate(180deg) scale(1.1);
+            }
+
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        /* Results section */
+        .results {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            transform: scale(0.9) rotateX(-10deg);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            visibility: hidden;
+            /* Initially hidden */
+        }
+
+        .results.show {
+            transform: scale(1) rotateX(0deg);
+            opacity: 1;
+            visibility: visible;
+            /* Make visible when shown */
+        }
+
+        .result-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            animation: result-appear 1s ease-out;
+        }
+
+        @keyframes result-appear {
+            0% {
+                transform: scale(0.5) rotateY(90deg);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.1) rotateY(0deg);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1) rotateY(0deg);
+                opacity: 1;
+            }
+        }
+
+        .result-fake {
+            color: var(--warning-red);
+            text-shadow:
+                0 0 20px var(--warning-red),
+                0 0 40px var(--warning-red),
+                0 0 60px rgba(255, 7, 58, 0.5);
+            animation: danger-pulse 2s infinite;
+        }
+
+        .result-real {
+            color: var(--matrix-green);
+            text-shadow:
+                0 0 20px var(--matrix-green),
+                0 0 40px var(--matrix-green),
+                0 0 60px rgba(0, 255, 136, 0.5);
+            animation: safe-glow 2s infinite;
+        }
+
+        @keyframes danger-pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+                filter: brightness(1.2);
+            }
+        }
+
+        @keyframes safe-glow {
+
+            0%,
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+                filter: brightness(1.1);
+            }
+        }
+
+        /* Confidence display */
+        .confidence-container {
+            margin-top: 2rem;
+        }
+
+        .confidence-label {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            color: #8cc8ff;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .confidence-display {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .confidence-circle {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .confidence-ring {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg,
+                    var(--neural-blue) 0deg,
+                    var(--plasma-purple) 120deg,
+                    var(--cyber-pink) 240deg,
+                    var(--neural-blue) 360deg);
+            padding: 8px;
+            animation: ring-rotate 4s linear infinite;
+        }
+
+        .confidence-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #000012;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 1px solid var(--glass-border);
+        }
+
+        .confidence-percentage {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .confidence-text {
+            font-size: 0.9rem;
+            color: #8cc8ff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @keyframes ring-rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 1rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            width: 0%;
+        }
+
+        .confidence-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.4),
+                    transparent);
+            animation: confidence-shimmer 2s infinite;
+        }
+
+        .confidence-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                repeating-linear-gradient(90deg,
+                    transparent 0px,
+                    rgba(255, 255, 255, 0.1) 1px,
+                    rgba(255, 255, 255, 0.1) 2px,
+                    transparent 3px);
+            animation: data-stream 1s linear infinite;
+        }
+
+        @keyframes confidence-shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        @keyframes data-stream {
+            0% {
+                transform: translateX(-10px);
+            }
+
+            100% {
+                transform: translateX(10px);
+            }
+        }
+
+        .confidence-fake .confidence-fill {
+            background: linear-gradient(90deg, var(--warning-red), #ff4757, var(--cyber-pink));
+            box-shadow:
+                0 0 20px rgba(255, 7, 58, 0.5),
+                inset 0 0 20px rgba(255, 71, 87, 0.3);
+        }
+
+        .confidence-real .confidence-fill {
+            background: linear-gradient(90deg, var(--matrix-green), #2ed573, var(--neural-blue));
+            box-shadow:
+                0 0 20px rgba(0, 255, 136, 0.5),
+                inset 0 0 20px rgba(46, 213, 115, 0.3);
+        }
+
+        /* Particle effects */
+        .particle-burst {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .burst-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--neural-blue);
+            border-radius: 50%;
+            animation: particle-explode 1s ease-out forwards;
+        }
+
+        @keyframes particle-explode {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(0) translate(var(--dx, 0), var(--dy, 0));
+            }
+        }
+
+        /* Celebration effects */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--primary-gradient);
+            animation: confetti-fall 3s ease-in-out infinite;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Glitch overlay */
+        .glitch-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            mix-blend-mode: overlay;
+            opacity: 0;
+            background:
+                repeating-linear-gradient(0deg,
+                    transparent 0px,
+                    rgba(255, 0, 110, 0.03) 1px,
+                    rgba(255, 0, 110, 0.03) 2px,
+                    transparent 3px);
+            animation: glitch-static 0.1s infinite;
+        }
+
+        .glitch-active .glitch-overlay {
+            opacity: 1;
+        }
+
+        @keyframes glitch-static {
+            0% {
+                transform: translateX(0);
+            }
+
+            10% {
+                transform: translateX(-2px);
+            }
+
+            20% {
+                transform: translateX(2px);
+            }
+
+            30% {
+                transform: translateX(-1px);
+            }
+
+            40% {
+                transform: translateX(1px);
+            }
+
+            50% {
+                transform: translateX(-2px);
+            }
+
+            60% {
+                transform: translateX(2px);
+            }
+
+            70% {
+                transform: translateX(-1px);
+            }
+
+            80% {
+                transform: translateX(1px);
+            }
+
+            90% {
+                transform: translateX(-2px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        /* Entrance animations */
+        .fade-in-up {
+            animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .fade-in-left {
+            animation: fadeInLeft 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .fade-in-right {
+            animation: fadeInRight 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(60px) rotateX(-15deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-60px) rotateY(-15deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0) rotateY(0deg);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(60px) rotateY(15deg);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0) rotateY(0deg);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 1000px;
+                gap: 3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 0 1rem;
+            }
+
+            .upload-section {
+                padding: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .file-input-display {
+                padding: 3rem 2rem;
+            }
+
+            .upload-icon {
+                font-size: 3rem;
+            }
+
+            .confidence-circle {
+                width: 150px;
+                height: 150px;
+            }
+
+            .confidence-percentage {
+                font-size: 2rem;
+            }
+
+            .result-label {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .upload-section {
+                padding: 1.5rem;
+            }
+
+            .file-input-display {
+                padding: 2rem 1rem;
+            }
+
+            .status-hud {
+                top: 10px;
+                right: 10px;
+            }
+
+            .neural-viz {
+                bottom: 10px;
+                left: 10px;
+                width: 150px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="custom-cursor" id="customCursor"></div>
+
+    <div class="matrix-rain" id="matrixRain"></div>
+
+    <div class="holo-grid"></div>
+
+    <div class="neural-network" id="neuralNetwork"></div>
+
+    <div class="glitch-overlay"></div>
+
+    <div class="celebration" id="celebration"></div>
+
+    <div class="status-hud">
+        <div class="hud-element" id="statusIndicator">
+            🔍 Initializing...
+        </div>
+        <div class="hud-element neural-activity" id="neuralActivity">
+            🧠 Neural Networks Active
+        </div>
+        <div class="hud-element" id="processingPower">
+            ⚡ Processing: 0%
+        </div>
+    </div>
+
+    <div class="neural-viz">
+        <div style="color: var(--neural-blue); font-size: 0.8rem;">Neural Activity</div>
+        <div class="neural-waves">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="upload-section fade-in-left" id="imageSection" style="animation-delay: 0.3s;">
+            <h2 class="section-title" data-text="🖼️ Image Analysis">🖼️ Image Analysis</h2>
+            <p class="section-subtitle">Advanced quantum scanning for synthetic image detection</p>
+
+            <div class="file-input-wrapper">
+                <input type="file" class="file-input" id="imageInput" accept="image/*">
+                <div class="file-input-display">
+                    <div class="upload-icon">📷</div>
+                    <div class="upload-text">Initiate Image Scan Protocol</div>
+                    <div class="upload-subtext">JPG, PNG, WebP • Max 25MB • AI-Enhanced Processing</div>
+                </div>
+            </div>
+
+            <div class="preview-area" id="imagePreview">
+                <div class="preview-placeholder">🔬 Image Analysis Chamber Ready</div>
+            </div>
+
+            <button class="detect-btn" id="imageDetectBtn" disabled>
+                🚀 Execute Quantum Analysis
+            </button>
+
+            <div class="results" id="imageResults">
+                <div class="result-label" id="imageResultLabel"></div>
+                <div class="confidence-container">
+                    <div class="confidence-label">Quantum Confidence Matrix</div>
+                    <div class="confidence-display">
+                        <div class="confidence-circle">
+                            <div class="confidence-ring">
+                                <div class="confidence-inner">
+                                    <div class="confidence-percentage" id="imageConfidencePercent">0%</div>
+                                    <div class="confidence-text">Certainty</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="imageConfidenceFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="upload-section fade-in-right" id="videoSection" style="animation-delay: 0.5s;">
+            <h2 class="section-title" data-text="🎬 Video Analysis">🎬 Video Analysis</h2>
+            <p class="section-subtitle">Temporal deepfake detection with neural frame analysis</p>
+
+            <div class="file-input-wrapper">
+                <input type="file" class="file-input" id="videoInput" accept="video/*">
+                <div class="file-input-display">
+                    <div class="upload-icon">🎥</div>
+                    <div class="upload-text">Initiate Video Scan Protocol</div>
+                    <div class="upload-subtext">MP4, WebM, AVI • Max 250MB • Neural Frame Processing</div>
+                </div>
+            </div>
+
+            <div class="preview-area" id="videoPreview">
+                <div class="preview-placeholder">🔬 Video Analysis Chamber Ready</div>
+            </div>
+
+            <button class="detect-btn" id="videoDetectBtn" disabled>
+                🚀 Execute Neural Analysis
+            </button>
+
+            <div class="results" id="videoResults">
+                <div class="result-label" id="videoResultLabel"></div>
+                <div class="confidence-container">
+                    <div class="confidence-label">Neural Confidence Matrix</div>
+                    <div class="confidence-display">
+                        <div class="confidence-circle">
+                            <div class="confidence-ring">
+                                <div class="confidence-inner">
+                                    <div class="confidence-percentage" id="videoConfidencePercent">0%</div>
+                                    <div class="confidence-text">Certainty</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="videoConfidenceFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        const API_BASE_URL = "http://127.0.0.1:8000";
+        let imageFile = null;
+        let videoFile = null;
+        let mouseTrail = [];
+
+        // DOM elements
+        const statusIndicator = document.getElementById('statusIndicator');
+        const neuralActivity = document.getElementById('neuralActivity');
+        const processingPower = document.getElementById('processingPower');
+        const customCursor = document.getElementById('customCursor');
+        const imageInput = document.getElementById('imageInput');
+        const videoInput = document.getElementById('videoInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const videoPreview = document.getElementById('videoPreview');
+        const imageDetectBtn = document.getElementById('imageDetectBtn');
+        const videoDetectBtn = document.getElementById('videoDetectBtn');
+        const imageResults = document.getElementById('imageResults');
+        const videoResults = document.getElementById('videoResults');
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeQuantumInterface();
+            checkBackendHealth();
+            createNeuralNetwork();
+            createMatrixRain();
+            setupEventListeners();
+            setupCustomCursor();
+            startNeuralActivity();
+            handlePageMode();
+        });
+
+        // Initialize quantum interface
+        function initializeQuantumInterface() {
+            // Add initial glitch effect
+            document.body.classList.add('glitch-active');
+            setTimeout(() => {
+                document.body.classList.remove('glitch-active');
+            }, 500);
+
+            // Initialize processing power indicator
+            let power = 0;
+            const powerInterval = setInterval(() => {
+                power += Math.random() * 15;
+                if (power >= 100) {
+                    power = 100;
+                    clearInterval(powerInterval);
+                }
+                processingPower.textContent = `⚡ Processing: 0%`; // Reset to 0 initially
+            }, 100);
+        }
+
+        // Custom cursor system
+        function setupCustomCursor() {
+            document.addEventListener('mousemove', (e) => {
+                customCursor.style.left = e.clientX + 'px';
+                customCursor.style.top = e.clientY + 'px';
+
+                // Create cursor trail
+                if (mouseTrail.length > 10) {
+                    const oldTrail = mouseTrail.shift();
+                    if (oldTrail && oldTrail.parentNode) {
+                        oldTrail.parentNode.removeChild(oldTrail);
+                    }
+                }
+
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.left = e.clientX + 'px';
+                trail.style.top = e.clientY + 'px';
+                document.body.appendChild(trail);
+                mouseTrail.push(trail);
+
+                // Animate trail
+                setTimeout(() => {
+                    if (trail.parentNode) {
+                        trail.style.opacity = '0';
+                        trail.style.transform = 'scale(0)';
+                        setTimeout(() => {
+                            if (trail.parentNode) {
+                                trail.parentNode.removeChild(trail);
+                            }
+                        }, 300);
+                    }
+                }, 100);
+
+                // Update hover effects for upload areas
+                updateHoverEffects(e);
+            });
+        }
+
+        // Update hover effects based on mouse position
+        function updateHoverEffects(e) {
+            const uploadAreas = document.querySelectorAll('.file-input-display');
+            uploadAreas.forEach(area => {
+                const rect = area.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                area.style.setProperty('--mouse-x', x + '%');
+                area.style.setProperty('--mouse-y', y + '%');
+            });
+        }
+
+        // Create neural network visualization
+        function createNeuralNetwork() {
+            const container = document.getElementById('neuralNetwork');
+            const nodeCount = 50;
+            const nodes = [];
+
+            // Create nodes
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'neural-node';
+                node.style.left = Math.random() * 100 + '%';
+                node.style.top = Math.random() * 100 + '%';
+                node.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(node);
+                nodes.push({
+                    element: node,
+                    x: parseFloat(node.style.left),
+                    y: parseFloat(node.style.top)
+                });
+            }
+
+            // Create connections between nearby nodes
+            nodes.forEach((nodeA, i) => {
+                nodes.forEach((nodeB, j) => {
+                    if (i !== j) {
+                        const distance = Math.sqrt(
+                            Math.pow(nodeA.x - nodeB.x, 2) +
+                            Math.pow(nodeA.y - nodeB.y, 2)
+                        );
+
+                        if (distance < 30 && Math.random() > 0.7) {
+                            const connection = document.createElement('div');
+                            connection.className = 'neural-connection';
+                            connection.style.left = nodeA.x + '%';
+                            connection.style.top = nodeA.y + '%';
+                            connection.style.width = distance + '%';
+
+                            const angle = Math.atan2(nodeB.y - nodeA.y, nodeB.x - nodeA.x) * 180 / Math.PI;
+                            connection.style.transform = `rotate(${angle}deg)`;
+                            connection.style.animationDelay = Math.random() * 4 + 's';
+
+                            container.appendChild(connection);
+                        }
+                    }
+                });
+            });
+        }
+
+        // Create matrix rain effect
+        function createMatrixRain() {
+            const container = document.getElementById('matrixRain');
+            const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+
+            for (let i = 0; i < 30; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 100 + '%';
+                column.style.animationDelay = Math.random() * 10 + 's';
+                column.style.animationDuration = (Math.random() * 5 + 5) + 's';
+
+                let text = '';
+                for (let j = 0; j < Math.random() * 20 + 10; j++) {
+                    text += characters[Math.floor(Math.random() * characters.length)] + '<br>';
+                }
+                column.innerHTML = text;
+
+                container.appendChild(column);
+            }
+        }
+
+        // Start neural activity animation
+        function startNeuralActivity() {
+            const waves = document.querySelectorAll('.wave-bar');
+            waves.forEach((wave, index) => {
+                setInterval(() => {
+                    const height = Math.random() * 25 + 5;
+                    wave.style.height = height + 'px';
+                }, Math.random() * 1000 + 500);
+            });
+        }
+
+        // Check backend health
+        async function checkBackendHealth() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`);
+                if (response.ok) {
+                    statusIndicator.textContent = '🟢 Quantum Link Active';
+                    statusIndicator.className = 'hud-element status-online';
+                } else {
+                    throw new Error('Backend not responding');
+                }
+            } catch (error) {
+                statusIndicator.textContent = '🔴 Quantum Link Down';
+                statusIndicator.className = 'hud-element status-offline';
+                console.error('Backend health check failed:', error);
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Image input handler
+            imageInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    imageFile = file;
+                    previewImage(file);
+                    imageDetectBtn.disabled = false;
+                    imageResults.classList.remove('show');
+                    triggerParticleBurst(imageInput.parentNode);
+                }
+            });
+
+            // Video input handler
+            videoInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    videoFile = file;
+                    previewVideo(file);
+                    videoDetectBtn.disabled = false;
+                    videoResults.classList.remove('show');
+                    triggerParticleBurst(videoInput.parentNode);
+                }
+            });
+
+            // Detection button handlers
+            imageDetectBtn.addEventListener('click', () => detectDeepfake('image'));
+            videoDetectBtn.addEventListener('click', () => detectDeepfake('video'));
+
+            // Enhanced drag and drop functionality
+            setupAdvancedDragDrop(imageInput.parentNode, imageInput, 'image');
+            setupAdvancedDragDrop(videoInput.parentNode, videoInput, 'video');
+        }
+
+        // Advanced drag and drop
+        function setupAdvancedDragDrop(wrapper, input, type) {
+            const display = wrapper.querySelector('.file-input-display');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                wrapper.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                wrapper.addEventListener(eventName, () => {
+                    display.style.transform = 'scale(1.05)';
+                    display.style.boxShadow = '0 0 50px rgba(0, 212, 255, 0.5)';
+                    triggerGlitchEffect();
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                wrapper.addEventListener(eventName, () => {
+                    display.style.transform = 'scale(1)';
+                    display.style.boxShadow = 'none';
+                });
+            });
+
+            wrapper.addEventListener('drop', (e) => {
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    input.files = files;
+                    input.dispatchEvent(new Event('change'));
+                    createCelebrationEffect();
+                }
+            });
+        }
+
+        // Trigger glitch effect
+        function triggerGlitchEffect() {
+            document.body.classList.add('glitch-active');
+            setTimeout(() => {
+                document.body.classList.remove('glitch-active');
+            }, 200);
+        }
+
+        // Create particle burst effect
+        function triggerParticleBurst(element) {
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'burst-particle';
+                particle.style.left = centerX + 'px';
+                particle.style.top = centerY + 'px';
+
+                const angle = (i / 12) * 2 * Math.PI;
+                const distance = 100 + Math.random() * 50;
+                const dx = Math.cos(angle) * distance;
+                const dy = Math.sin(angle) * distance;
+
+                particle.style.setProperty('--dx', dx + 'px');
+                particle.style.setProperty('--dy', dy + 'px');
+
+                document.body.appendChild(particle);
+
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 1000);
+            }
+        }
+
+        // Create celebration effect
+        function createCelebrationEffect() {
+            const container = document.getElementById('celebration');
+
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                const colors = ['var(--neural-blue)', 'var(--plasma-purple)', 'var(--cyber-pink)', 'var(--matrix-green)'];
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                container.appendChild(confetti);
+
+                setTimeout(() => {
+                    if (confetti.parentNode) {
+                        confetti.parentNode.removeChild(confetti);
+                    }
+                }, 3000);
+            }
+        }
+
+        // Enhanced preview functions
+        function previewImage(file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="preview-media">`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function previewVideo(file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                videoPreview.innerHTML = `<video src="${e.target.result}" controls class="preview-media" muted></video>`;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Main detection function
+        async function detectDeepfake(type) {
+            const file = type === 'image' ? imageFile : videoFile;
+            const button = type === 'image' ? imageDetectBtn : videoDetectBtn;
+
+            if (!file) {
+                triggerGlitchEffect();
+                alert(`Please select a ${type} first!`);
+                return;
+            }
+
+            // Advanced loading state
+            button.disabled = true;
+            button.innerHTML = '<div class="quantum-loader"></div>Quantum Analysis In Progress...';
+
+            // Start processing power animation
+            let processingValue = 0;
+            const processingInterval = setInterval(() => {
+                processingValue += Math.random() * 10;
+                if (processingValue > 95) processingValue = 95;
+                processingPower.textContent = `⚡ Processing: ${Math.round(processingValue)}%`;
+            }, 100);
+
+            // Trigger neural activity surge
+            neuralActivity.style.animation = 'data-pulse 0.5s infinite';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await fetch(`${API_BASE_URL}/predict/${type}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                // Complete processing animation
+                clearInterval(processingInterval);
+                processingPower.textContent = '⚡ Processing: 100%';
+
+                // Display results
+                await displayQuantumResult(result, type);
+
+            } catch (error) {
+                console.error('Detection error:', error);
+                triggerGlitchEffect();
+                alert(`Quantum analysis failed: ${error.message}`);
+                clearInterval(processingInterval);
+            } finally {
+                // Reset button and animations
+                button.disabled = false;
+                button.innerHTML = `🚀 Execute ${type === 'image' ? 'Quantum' : 'Neural'} Analysis`;
+                neuralActivity.style.animation = 'data-pulse 2s infinite';
+            }
+        }
+
+        // Enhanced results display
+        async function displayQuantumResult(result, type) {
+            const resultsDiv = type === 'image' ? imageResults : videoResults;
+            const labelElement = document.getElementById(`${type}ResultLabel`);
+            const confidencePercent = document.getElementById(`${type}ConfidencePercent`);
+            const confidenceFill = document.getElementById(`${type}ConfidenceFill`);
+
+            // Trigger dramatic effects
+            if (result.label === 'FAKE') {
+                triggerDangerEffects();
+            } else {
+                triggerSafeEffects();
+            }
+
+            // Animate result appearance
+            labelElement.textContent = result.label;
+            labelElement.className = `result-label result-${result.label.toLowerCase()}`;
+
+            // Animate confidence display
+            const confidenceValue = Math.round(result.confidence * 100);
+            confidencePercent.textContent = '0%';
+
+            // Show results container
+            resultsDiv.classList.add('show');
+
+            // Animate confidence counter
+            let currentValue = 0;
+            const increment = confidenceValue / 100;
+            const counter = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= confidenceValue) {
+                    currentValue = confidenceValue;
+                    clearInterval(counter);
+                }
+                confidencePercent.textContent = Math.round(currentValue) + '%';
+            }, 20);
+
+            // Animate confidence bar
+            setTimeout(() => {
+                confidenceFill.style.width = confidenceValue + '%';
+                confidenceFill.className = `confidence-fill confidence-${result.label.toLowerCase()}`;
+
+                resultsDiv.className = `results show confidence-${result.label.toLowerCase()}`;
+            }, 500);
+
+            // Trigger particle celebration
+            setTimeout(() => {
+                triggerParticleBurst(resultsDiv);
+            }, 1000);
+        }
+
+        // Danger effects for FAKE detection
+        function triggerDangerEffects() {
+            document.body.classList.add('glitch-active');
+        }
+
+        // Safe effects for REAL detection
+        function triggerSafeEffects() {
+            createCelebrationEffect();
+        }
+
+        function handlePageMode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+
+            const imageSection = document.getElementById('imageSection');
+            const videoSection = document.getElementById('videoSection');
+            const container = document.querySelector('.container');
+
+            if (mode === 'image') {
+                videoSection.classList.add('hidden');
+                // Make the container a single column and center the content
+                container.style.gridTemplateColumns = '1fr';
+                container.style.maxWidth = '800px';
+            } else if (mode === 'video') {
+                imageSection.classList.add('hidden');
+                // Make the container a single column and center the content
+                container.style.gridTemplateColumns = '1fr';
+                container.style.maxWidth = '800px';
+            } else {
+                // Optional: Handle cases where no mode is specified, 
+                // for example, show a message or default to image mode.
+                // For now, it will just show both as before.
+                console.log('No detection mode specified in URL.');
+            }
+        }
+
+    </script>
+</body>
+
+</html>

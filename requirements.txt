@@ -1,0 +1,21 @@
+# Core Deep Learning
+torch>=2.0.0
+torchvision>=0.15.0
+timm>=0.9.2
+
+# Data Handling & Utilities
+numpy>=1.23.0
+pandas>=1.5.0
+joblib>=1.2.0
+scikit-learn>=1.2.0
+
+# Video Processing
+opencv-python>=4.7.0.72
+
+# Web Backend
+fastapi>=0.100.0
+uvicorn[standard]>=0.23.0
+
+# Misc
+Pillow>=9.3.0
+tqdm>=4.65.0

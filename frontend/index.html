@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepGuard AI - Quantum Detection Matrix</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --quantum-blue: #0066ff;
+            --plasma-purple: #6600ff;
+            --cyber-pink: #ff0066;
+            --neural-green: #00ff66;
+            --void-black: #000011;
+            --matrix-teal: #00ffcc;
+            --energy-gold: #ffcc00;
+            --blood-red: #cc0000;
+            --ice-white: #ffffff;
+
+            --gradient-primary: linear-gradient(135deg, var(--quantum-blue), var(--plasma-purple), var(--cyber-pink));
+            --gradient-neural: linear-gradient(45deg, var(--neural-green), var(--matrix-teal), var(--quantum-blue));
+            --gradient-void: radial-gradient(ellipse at center, var(--void-black) 0%, #000005 70%, #000000 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gradient-void);
+            color: var(--ice-white);
+            overflow-x: hidden;
+            cursor: none;
+            min-height: 100vh;
+        }
+
+        /* Quantum Cursor System */
+        .quantum-cursor {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cursor-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            background: var(--ice-white);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: cursor-pulse 1.5s infinite;
+        }
+
+        .cursor-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: cursor-rotate 3s linear infinite;
+        }
+
+        .cursor-trail {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: var(--quantum-blue);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.6;
+        }
+
+        @keyframes cursor-pulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes cursor-rotate {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* Hyperspace Particle System */
+        .hyperspace-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--quantum-blue);
+            border-radius: 50%;
+            animation: particle-warp 3s linear infinite;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        @keyframes particle-warp {
+            0% {
+                transform: translate(0, 100vh) scale(0.5);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(var(--dx), -100px) scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* Neural Grid Matrix */
+        .neural-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 102, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 102, 255, 0.1) 1px, transparent 1px);
+            background-size: 100px 100px;
+            z-index: 0;
+            animation: grid-pulse 4s ease-in-out infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes grid-pulse {
+
+            0%,
+            100% {
+                opacity: 0.1;
+                background-size: 100px 100px;
+            }
+
+            50% {
+                opacity: 0.3;
+                background-size: 120px 120px;
+            }
+        }
+
+        /* Loading Sequence */
+        .loading-sequence {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--void-black);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 1s ease-out, visibility 1s ease-out;
+        }
+
+        .loading-sequence.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .quantum-loader {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 40px;
+        }
+
+        .loader-ring {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-radius: 50%;
+            animation: quantum-spin 2s linear infinite;
+        }
+
+        .loader-ring:nth-child(1) {
+            border-top: 4px solid var(--quantum-blue);
+            animation-duration: 2s;
+        }
+
+        .loader-ring:nth-child(2) {
+            border-right: 4px solid var(--plasma-purple);
+            animation-duration: 1.5s;
+            animation-direction: reverse;
+            transform: scale(0.8);
+        }
+
+        .loader-ring:nth-child(3) {
+            border-bottom: 4px solid var(--cyber-pink);
+            animation-duration: 1s;
+            transform: scale(0.6);
+        }
+
+        .loader-ring:nth-child(4) {
+            border-left: 4px solid var(--neural-green);
+            animation-duration: 0.5s;
+            animation-direction: reverse;
+            transform: scale(0.4);
+        }
+
+        @keyframes quantum-spin {
+            0% {
+                transform: rotate(0deg) scale(var(--scale, 1));
+            }
+
+            50% {
+                transform: rotate(180deg) scale(calc(var(--scale, 1) * 1.1));
+            }
+
+            100% {
+                transform: rotate(360deg) scale(var(--scale, 1));
+            }
+        }
+
+        .loading-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            color: var(--quantum-blue);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: text-glow 2s ease-in-out infinite alternate;
+            margin-bottom: 20px;
+        }
+
+        .loading-progress {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+            box-shadow: 0 0 20px var(--quantum-blue);
+        }
+
+        .loading-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--ice-white);
+            opacity: 0.8;
+            animation: status-flicker 0.5s infinite alternate;
+        }
+
+        @keyframes text-glow {
+            0% {
+                text-shadow: 0 0 20px var(--quantum-blue);
+            }
+
+            100% {
+                text-shadow: 0 0 40px var(--quantum-blue), 0 0 60px var(--plasma-purple);
+            }
+        }
+
+        @keyframes status-flicker {
+            0% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0.4;
+            }
+        }
+
+        /* Main Interface */
+        .main-interface {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .main-interface.loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Quantum Header */
+        .quantum-header {
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+            background: radial-gradient(ellipse at center, rgba(0, 102, 255, 0.2) 0%, transparent 70%);
+        }
+
+        .quantum-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            background-size: 200% 100%;
+            animation: energy-flow 3s linear infinite;
+        }
+
+        @keyframes energy-flow {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 300% 300%;
+            animation: logo-gradient 5s ease-in-out infinite;
+            margin-bottom: 20px;
+            text-shadow: 0 0 80px rgba(0, 102, 255, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+
+        .logo::after {
+            content: 'DeepGuard AI';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            background: var(--cyber-pink);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.3;
+            z-index: -1;
+            animation: glitch 0.3s infinite linear alternate-reverse;
+        }
+
+        @keyframes logo-gradient {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+            }
+
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        .tagline {
+            font-size: 1.4rem;
+            color: var(--matrix-teal);
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: tagline-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes tagline-pulse {
+
+            0%,
+            100% {
+                opacity: 0.9;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+        }
+
+        .quantum-subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Selection Arena */
+        .selection-arena {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        .arena-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 100px;
+            max-width: 1400px;
+            width: 100%;
+            perspective: 1000px;
+        }
+
+        /* Detection Pods */
+        .detection-pod {
+            position: relative;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid transparent;
+            border-radius: 30px;
+            padding: 60px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+            transform-style: preserve-3d;
+            overflow: hidden;
+        }
+
+        .detection-pod::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            border-radius: 30px;
+            z-index: -1;
+        }
+
+        .detection-pod::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: rgba(0, 0, 17, 0.95);
+            border-radius: 28px;
+            z-index: -1;
+        }
+
+        .detection-pod:hover {
+            transform: translateY(-20px) rotateX(10deg) scale(1.05);
+            border-color: var(--quantum-blue);
+            box-shadow:
+                0 40px 100px rgba(0, 102, 255, 0.4),
+                0 0 150px rgba(102, 0, 255, 0.3),
+                inset 0 0 100px rgba(255, 255, 255, 0.05);
+        }
+
+        .detection-pod:hover::before {
+            opacity: 0.1;
+        }
+
+        .detection-pod.selected {
+            transform: translateY(-30px) rotateX(15deg) scale(1.1);
+            border-color: var(--neural-green);
+            box-shadow:
+                0 50px 120px rgba(0, 255, 102, 0.5),
+                0 0 200px rgba(0, 255, 204, 0.4),
+                inset 0 0 120px rgba(255, 255, 255, 0.1);
+        }
+
+        .detection-pod.selected::before {
+            opacity: 0.2;
+            background: var(--gradient-neural);
+        }
+
+        .pod-icon {
+            font-size: 6rem;
+            margin-bottom: 30px;
+            display: block;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: icon-float 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(0, 102, 255, 0.6));
+        }
+
+        .detection-pod:hover .pod-icon {
+            animation-play-state: paused;
+            transform: scale(1.2) rotate(10deg);
+            filter: drop-shadow(0 0 50px rgba(0, 102, 255, 0.8));
+        }
+
+        .detection-pod.selected .pod-icon {
+            background: var(--gradient-neural);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 60px rgba(0, 255, 102, 0.8));
+        }
+
+        @keyframes icon-float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(-10px) rotate(2deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(0deg);
+            }
+
+            75% {
+                transform: translateY(-10px) rotate(-2deg);
+            }
+        }
+
+        .pod-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--ice-white);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .pod-description {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .pod-specs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 40px;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .spec-item {
+            text-align: center;
+        }
+
+        .spec-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--quantum-blue);
+            margin-bottom: 5px;
+        }
+
+        .spec-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pod-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--neural-green);
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            background: var(--neural-green);
+            border-radius: 50%;
+            animation: status-blink 2s infinite;
+            box-shadow: 0 0 15px var(--neural-green);
+        }
+
+        @keyframes status-blink {
+
+            0%,
+            50% {
+                opacity: 1;
+            }
+
+            51%,
+            100% {
+                opacity: 0.3;
+            }
+        }
+
+        /* Activation Portal */
+        .activation-portal {
+            text-align: center;
+            padding: 80px 20px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .activation-portal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .portal-message {
+            font-size: 1.5rem;
+            color: var(--matrix-teal);
+            margin-bottom: 40px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .quantum-activate-btn {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--ice-white);
+            background: transparent;
+            border: 3px solid var(--quantum-blue);
+            border-radius: 20px;
+            padding: 20px 60px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .quantum-activate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: -1;
+        }
+
+        .quantum-activate-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: var(--neural-green);
+            box-shadow:
+                0 20px 60px rgba(0, 255, 102, 0.4),
+                0 0 100px rgba(0, 102, 255, 0.3);
+        }
+
+        .quantum-activate-btn:hover::before {
+            left: 0;
+        }
+
+        .quantum-activate-btn:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .quantum-activate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Power Level Display */
+        .power-level {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            font-family: 'JetBrains Mono', monospace;
+            transform: translateX(300px);
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .power-level.visible {
+            transform: translateX(0);
+        }
+
+        .power-title {
+            color: var(--quantum-blue);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .power-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .power-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            width: 0%;
+            transition: width 2s ease;
+            border-radius: 4px;
+            box-shadow: 0 0 20px var(--quantum-blue);
+        }
+
+        .power-text {
+            color: var(--ice-white);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        /* Audio Visualizer */
+        .audio-viz {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            padding: 20px;
+            z-index: 1;
+            background: linear-gradient(to top, rgba(0, 102, 255, 0.1), transparent);
+        }
+
+        .viz-bar {
+            width: 4px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+            animation: viz-pulse 0.5s infinite alternate;
+            box-shadow: 0 0 10px var(--quantum-blue);
+            min-height: 5px;
+        }
+
+        @keyframes viz-pulse {
+            0% {
+                height: 10px;
+                opacity: 0.5;
+            }
+
+            100% {
+                height: var(--height, 40px);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .arena-container {
+                gap: 60px;
+            }
+
+            .detection-pod {
+                padding: 40px 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .arena-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                max-width: 500px;
+            }
+
+            .logo {
+                font-size: 3rem;
+            }
+
+            .pod-icon {
+                font-size: 4rem;
+            }
+
+            .pod-title {
+                font-size: 1.8rem;
+            }
+
+            .power-level {
+                top: 20px;
+                right: 20px;
+                padding: 15px;
+            }
+
+            .power-bar {
+                width: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quantum-header {
+                padding: 40px 20px;
+            }
+
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .detection-pod {
+                padding: 30px 20px;
+            }
+
+            .pod-icon {
+                font-size: 3rem;
+            }
+
+            .pod-title {
+                font-size: 1.5rem;
+            }
+
+            .quantum-activate-btn {
+                padding: 15px 40px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Quantum Cursor -->
+    <div class="quantum-cursor" id="quantumCursor">
+        <div class="cursor-core"></div>
+        <div class="cursor-orbit"></div>
+        <div class="cursor-trail"></div>
+    </div>
+
+    <!-- Hyperspace Particles -->
+    <div class="hyperspace-particles" id="hyperspaceParticles"></div>
+
+    <!-- Neural Grid -->
+    <div class="neural-grid"></div>
+
+    <!-- Audio Visualizer -->
+    <div class="audio-viz" id="audioViz"></div>
+
+    <!-- Power Level Display -->
+    <div class="power-level" id="powerLevel">
+        <div class="power-title">Quantum Power</div>
+        <div class="power-bar">
+            <div class="power-fill" id="powerFill"></div>
+        </div>
+        <div class="power-text" id="powerText">Initializing...</div>
+    </div>
+
+    <!-- Loading Sequence -->
+    <div class="loading-sequence" id="loadingSequence">
+        <div class="quantum-loader">
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+        </div>
+        <div class="loading-text" id="loadingText">INITIALIZING QUANTUM MATRIX</div>
+        <div class="loading-progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="loading-status" id="loadingStatus">Loading neural networks...</div>
+    </div>
+
+    <!-- Main Interface -->
+    <div class="main-interface" id="mainInterface">
+        <!-- Quantum Header -->
+        <header class="quantum-header">
+            <h1 class="logo">DeepGuard AI</h1>
+            <p class="tagline">Quantum Neural Detection Matrix</p>
+            <p class="quantum-subtitle">Advanced AI-Powered Deepfake Detection System</p>
+        </header>
+
+        <!-- Selection Arena -->
+        <section class="selection-arena">
+            <div class="arena-container">
+                <!-- Image Detection Pod -->
+                <div class="detection-pod" id="imagePod" data-type="image">
+                    <div class="pod-icon">🖼️</div>
+                    <h2 class="pod-title">Image Scanner</h2>
+                    <p class="pod-description">
+                        Advanced neural analysis for detecting synthetic faces and manipulated imagery using
+                        quantum-enhanced pattern recognition algorithms.
+                    </p>
+                    <div class="pod-specs">
+                        <div class="spec-item">
+                            <div class="spec-value">99.7%</div>
+                            <div class="spec-label">Accuracy</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">&lt;2s</div>
+                            <div class="spec-label">Speed</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">25MB</div>
+                            <div class="spec-label">Max Size</div>
+                        </div>
+                    </div>
+                    <div class="pod-status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                </div>
+
+                <!-- Video Detection Pod -->
+                <div class="detection-pod" id="videoPod" data-type="video">
+                    <div class="pod-icon">🎬</div>
+                    <h2 class="pod-title">Video Analyzer</h2>
+                    <p class="pod-description">
+                        Temporal sequence analysis for detecting deepfake videos through advanced frame-by-frame neural
+                        processing and motion pattern analysis.
+                    </p>
+                    <div class="pod-specs">
+                        <div class="spec-item">
+                            <div class="spec-value">99.2%</div>
+                            <div class="spec-label">Accuracy</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">&lt;30s</div>
+                            <div class="spec-label">Speed</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-value">250MB</div>
+                            <div class="spec-label">Max Size</div>
+                        </div>
+                    </div>
+                    <div class="pod-status">
+                        <div class="status-indicator"></div>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activation Portal -->
+        <section class="activation-portal" id="activationPortal">
+            <p class="portal-message">Select your detection protocol to continue</p>
+            <button class="quantum-activate-btn" id="activateBtn" disabled>
+                Initialize Quantum Scanner
+            </button>
+        </section>
+    </div>
+    <script>
+        class QuantumInterface {
+            constructor() {
+                this.selectedType = null;
+                this.isLoading = true;
+                this.powerLevel = 0;
+                this.init();
+            }
+
+            init() {
+                console.log('Initializing Quantum Interface...');
+                this.initCursor();
+                this.initParticles();
+                this.initAudioViz();
+                this.startLoadingSequence();
+            }
+
+            startLoadingSequence() {
+                console.log('Starting loading sequence...');
+                const progressBar = document.getElementById('progressBar');
+                const loadingText = document.getElementById('loadingText');
+                const loadingStatus = document.getElementById('loadingStatus');
+                const powerFill = document.getElementById('powerFill');
+                const powerText = document.getElementById('powerText');
+
+                if (!progressBar || !loadingText || !loadingStatus) {
+                    console.error('Loading elements not found, forcing completion...');
+                    setTimeout(() => this.completeLoading(), 1000);
+                    return;
+                }
+
+                const stages = [
+                    { text: 'INITIALIZING QUANTUM MATRIX', status: 'Booting quantum processors...', progress: 15 },
+                    { text: 'LOADING NEURAL NETWORKS', status: 'Establishing neural pathways...', progress: 35 },
+                    { text: 'CALIBRATING SENSORS', status: 'Synchronizing detection arrays...', progress: 55 },
+                    { text: 'OPTIMIZING ALGORITHMS', status: 'Enhancing pattern recognition...', progress: 75 },
+                    { text: 'ACTIVATING AI CORES', status: 'Bringing AI systems online...', progress: 90 },
+                    { text: 'QUANTUM LINK ESTABLISHED', status: 'System ready for operation...', progress: 100 }
+                ];
+
+                let stageIndex = 0;
+
+                const runStage = () => {
+                    if (stageIndex >= stages.length) {
+                        this.completeLoading();
+                        return;
+                    }
+
+                    const stage = stages[stageIndex];
+                    console.log(`Stage ${stageIndex + 1}: ${stage.text} - ${stage.progress}%`);
+
+                    loadingText.textContent = stage.text;
+                    loadingStatus.textContent = stage.status;
+                    progressBar.style.width = stage.progress + '%';
+
+                    if (powerFill && powerText) {
+                        powerFill.style.width = stage.progress + '%';
+                        powerText.textContent = stage.progress + '% Power';
+                    }
+
+                    this.powerLevel = stage.progress;
+
+                    // Create loading particles
+                    if (stageIndex > 0) {
+                        this.createLoadingBurst();
+                    }
+
+                    stageIndex++;
+                    setTimeout(runStage, 1200);
+                };
+
+                setTimeout(runStage, 500);
+            }
+
+            createLoadingBurst() {
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+
+                for (let i = 0; i < 12; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'fixed';
+                    particle.style.left = centerX + 'px';
+                    particle.style.top = centerY + 'px';
+                    particle.style.width = '4px';
+                    particle.style.height = '4px';
+                    particle.style.background = '#00ffcc';
+                    particle.style.borderRadius = '50%';
+                    particle.style.pointerEvents = 'none';
+                    particle.style.zIndex = '10000';
+                    particle.style.boxShadow = '0 0 12px #00ffcc';
+
+                    document.body.appendChild(particle);
+
+                    const angle = (i / 12) * Math.PI * 2;
+                    const distance = 80 + Math.random() * 100;
+                    const endX = centerX + Math.cos(angle) * distance;
+                    const endY = centerY + Math.sin(angle) * distance;
+
+                    particle.animate([
+                        { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                        { transform: `translate(${endX - centerX}px, ${endY - centerY}px) scale(0)`, opacity: 0 }
+                    ], {
+                        duration: 800,
+                        easing: 'ease-out'
+                    }).onfinish = () => particle.remove();
+                }
+            }
+
+            completeLoading() {
+                console.log('Loading complete, showing main interface...');
+                const loadingSequence = document.getElementById('loadingSequence');
+                const mainInterface = document.getElementById('mainInterface');
+                const powerLevel = document.getElementById('powerLevel');
+
+                // Create completion burst
+                this.createSystemActivationBurst();
+
+                setTimeout(() => {
+                    loadingSequence.classList.add('hidden');
+                    mainInterface.classList.add('loaded');
+                    if (powerLevel) powerLevel.classList.add('visible');
+                    this.isLoading = false;
+
+                    this.bindEvents();
+                    this.startPowerFluctuations();
+
+                    setTimeout(() => {
+                        const activationPortal = document.getElementById('activationPortal');
+                        if (activationPortal) {
+                            activationPortal.classList.add('visible');
+                        }
+                    }, 1000);
+                }, 1000);
+            }
+
+            createSystemActivationBurst() {
+                const centerX = window.innerWidth / 2;
+                const centerY = window.innerHeight / 2;
+
+                for (let i = 0; i < 25; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'fixed';
+                    particle.style.left = centerX + 'px';
+                    particle.style.top = centerY + 'px';
+                    particle.style.width = '6px';
+                    particle.style.height = '6px';
+                    particle.style.background = '#00ffcc';
+                    particle.style.borderRadius = '50%';
+                    particle.style.pointerEvents = 'none';
+                    particle.style.zIndex = '10001';
+                    particle.style.boxShadow = '0 0 20px #00ffcc';
+
+                    document.body.appendChild(particle);
+
+                    const angle = (i / 25) * Math.PI * 2;
+                    const distance = 150 + Math.random() * 150;
+                    const endX = centerX + Math.cos(angle) * distance;
+                    const endY = centerY + Math.sin(angle) * distance;
+
+                    particle.animate([
+                        { transform: 'translate(-50%, -50%) scale(0)', opacity: 0 },
+                        { transform: 'translate(-50%, -50%) scale(1.5)', opacity: 1, offset: 0.3 },
+                        { transform: `translate(${endX - centerX}px, ${endY - centerY}px) scale(0)`, opacity: 0 }
+                    ], {
+                        duration: 1800,
+                        easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                    }).onfinish = () => particle.remove();
+                }
+            }
+
+            startPowerFluctuations() {
+                const powerFill = document.getElementById('powerFill');
+                const powerText = document.getElementById('powerText');
+
+                if (!powerFill || !powerText) return;
+
+                setInterval(() => {
+                    const fluctuation = (Math.random() - 0.5) * 8;
+                    const newPower = Math.max(92, Math.min(100, 100 + fluctuation));
+
+                    powerFill.style.width = newPower + '%';
+
+                    if (newPower > 98) {
+                        powerText.textContent = 'MAXIMUM POWER';
+                        powerFill.style.background = 'linear-gradient(90deg, #00ff66, #00ffcc)';
+                        powerFill.style.boxShadow = '0 0 30px rgba(0, 255, 102, 0.8)';
+                    } else {
+                        powerText.textContent = Math.round(newPower) + '% Power';
+                        powerFill.style.background = 'linear-gradient(90deg, #0066ff, #6600ff)';
+                        powerFill.style.boxShadow = '0 0 20px rgba(0, 102, 255, 0.5)';
+                    }
+                }, 2000);
+            }
+
+            bindEvents() {
+                const imagePod = document.getElementById('imagePod');
+                const videoPod = document.getElementById('videoPod');
+                const activateBtn = document.getElementById('activateBtn');
+
+                if (imagePod) {
+                    imagePod.addEventListener('click', () => this.selectPod('image', imagePod));
+                    imagePod.addEventListener('mouseenter', () => this.createHoverEffect(imagePod));
+                }
+
+                if (videoPod) {
+                    videoPod.addEventListener('click', () => this.selectPod('video', videoPod));
+                    videoPod.addEventListener('mouseenter', () => this.createHoverEffect(videoPod));
+                }
+
+                if (activateBtn) {
+                    activateBtn.addEventListener('click', () => this.activate());
+                }
+            }
+
+            createHoverEffect(element) {
+                const rect = element.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                for (let i = 0; i < 8; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'fixed';
+                    particle.style.left = centerX + 'px';
+                    particle.style.top = centerY + 'px';
+                    particle.style.width = '4px';
+                    particle.style.height = '4px';
+                    particle.style.background = '#0066ff';
+                    particle.style.borderRadius = '50%';
+                    particle.style.pointerEvents = 'none';
+                    particle.style.zIndex = '9999';
+                    particle.style.boxShadow = '0 0 12px #0066ff';
+
+                    document.body.appendChild(particle);
+
+                    const angle = (i / 8) * Math.PI * 2;
+                    const distance = 50 + Math.random() * 30;
+                    const endX = centerX + Math.cos(angle) * distance;
+                    const endY = centerY + Math.sin(angle) * distance;
+
+                    particle.animate([
+                        { transform: 'translate(-50%, -50%) scale(0)', opacity: 0 },
+                        { transform: 'translate(-50%, -50%) scale(1)', opacity: 1, offset: 0.3 },
+                        { transform: `translate(${endX - centerX}px, ${endY - centerY}px) scale(0)`, opacity: 0 }
+                    ], {
+                        duration: 600,
+                        easing: 'ease-out'
+                    }).onfinish = () => particle.remove();
+                }
+            }
+
+            selectPod(type, podElement) {
+                if (this.isLoading) return;
+
+                document.querySelectorAll('.detection-pod').forEach(pod => {
+                    pod.classList.remove('selected');
+                });
+
+                podElement.classList.add('selected');
+                this.selectedType = type;
+
+                const activateBtn = document.getElementById('activateBtn');
+                if (activateBtn) {
+                    activateBtn.disabled = false;
+                    const typeText = type === 'image' ? 'Image Scanner' : 'Video Analyzer';
+                    activateBtn.textContent = `Initialize ${typeText}`;
+                }
+
+                this.createSelectionBurst(podElement);
+
+                const powerText = document.getElementById('powerText');
+                if (powerText) {
+                    const typeText = type === 'image' ? 'Image Scanner' : 'Video Analyzer';
+                    powerText.textContent = `${typeText} Ready`;
+                }
+            }
+
+            createSelectionBurst(element) {
+                const rect = element.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                for (let i = 0; i < 18; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'fixed';
+                    particle.style.left = centerX + 'px';
+                    particle.style.top = centerY + 'px';
+                    particle.style.width = '6px';
+                    particle.style.height = '6px';
+                    particle.style.background = '#00ff66';
+                    particle.style.borderRadius = '50%';
+                    particle.style.pointerEvents = 'none';
+                    particle.style.zIndex = '10000';
+                    particle.style.boxShadow = '0 0 15px #00ff66';
+
+                    document.body.appendChild(particle);
+
+                    const angle = (i / 18) * Math.PI * 2;
+                    const distance = 100 + Math.random() * 80;
+                    const endX = centerX + Math.cos(angle) * distance;
+                    const endY = centerY + Math.sin(angle) * distance;
+
+                    particle.animate([
+                        { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                        { transform: `translate(${endX - centerX}px, ${endY - centerY}px) scale(0)`, opacity: 0 }
+                    ], {
+                        duration: 1000,
+                        easing: 'ease-out'
+                    }).onfinish = () => particle.remove();
+                }
+            }
+
+            activate() {
+                if (!this.selectedType || this.isLoading) return;
+
+                this.createActivationEffect();
+
+                const activateBtn = document.getElementById('activateBtn');
+                if (activateBtn) {
+                    activateBtn.disabled = true;
+                    activateBtn.textContent = 'INITIALIZING...';
+                }
+
+                setTimeout(() => {
+                    // Navigate to the detection page with the selected type as a URL parameter
+                    window.location.href = `detection.html?mode=${this.selectedType}`;
+                }, 2000);
+            }
+
+            createActivationEffect() {
+                const flash = document.createElement('div');
+                flash.style.position = 'fixed';
+                flash.style.top = '0';
+                flash.style.left = '0';
+                flash.style.width = '100%';
+                flash.style.height = '100%';
+                flash.style.background = 'linear-gradient(45deg, rgba(0, 102, 255, 0.3), rgba(0, 255, 102, 0.3))';
+                flash.style.opacity = '0';
+                flash.style.pointerEvents = 'none';
+                flash.style.zIndex = '9999';
+                flash.style.mixBlendMode = 'screen';
+
+                document.body.appendChild(flash);
+
+                flash.animate([
+                    { opacity: 0 },
+                    { opacity: 1, offset: 0.1 },
+                    { opacity: 0.7, offset: 0.3 },
+                    { opacity: 0 }
+                ], {
+                    duration: 2000,
+                    easing: 'ease-in-out'
+                }).onfinish = () => flash.remove();
+
+                const powerFill = document.getElementById('powerFill');
+                const powerText = document.getElementById('powerText');
+
+                if (powerFill && powerText) {
+                    powerFill.style.width = '100%';
+                    powerFill.style.background = 'linear-gradient(90deg, #00ff66, #00ffcc)';
+                    powerFill.style.boxShadow = '0 0 50px rgba(0, 255, 102, 1)';
+                    powerText.textContent = 'QUANTUM LINK ACTIVE';
+                }
+            }
+
+            initCursor() {
+                const cursor = document.getElementById('quantumCursor');
+                let mouseX = 0, mouseY = 0;
+                let cursorX = 0, cursorY = 0;
+
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                });
+
+                const updateCursor = () => {
+                    const dx = mouseX - cursorX;
+                    const dy = mouseY - cursorY;
+
+                    cursorX += dx * 0.15;
+                    cursorY += dy * 0.15;
+
+                    cursor.style.left = cursorX + 'px';
+                    cursor.style.top = cursorY + 'px';
+
+                    requestAnimationFrame(updateCursor);
+                };
+
+                updateCursor();
+            }
+
+            initParticles() {
+                const container = document.getElementById('hyperspaceParticles');
+                const colors = ['#0066ff', '#6600ff', '#ff0066', '#00ff66', '#00ffcc', '#ffcc00'];
+
+                const createParticle = () => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+
+                    const startX = Math.random() * window.innerWidth;
+                    const endX = startX + (Math.random() - 0.5) * 400;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const size = 2 + Math.random() * 3;
+
+                    particle.style.left = startX + 'px';
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    particle.style.background = color;
+                    particle.style.boxShadow = `0 0 ${size * 4}px ${color}`;
+                    particle.style.setProperty('--dx', endX - startX + 'px');
+                    particle.style.animationDuration = (2.5 + Math.random() * 1.5) + 's';
+
+                    container.appendChild(particle);
+
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.remove();
+                        }
+                    }, 4000);
+                };
+
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(createParticle, i * 150);
+                }
+
+                setInterval(createParticle, 200);
+            }
+
+            initAudioViz() {
+                const container = document.getElementById('audioViz');
+                const bars = [];
+
+                for (let i = 0; i < 70; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'viz-bar';
+                    container.appendChild(bar);
+                    bars.push(bar);
+                }
+
+                const updateViz = () => {
+                    bars.forEach((bar, index) => {
+                        const baseHeight = 10;
+                        const maxHeight = 55;
+                        const intensity = Math.sin((Date.now() * 0.001) + (index * 0.1)) * 0.5 + 0.5;
+                        const randomness = Math.random() * 0.7 + 0.3;
+                        const height = baseHeight + (maxHeight - baseHeight) * intensity * randomness;
+
+                        bar.style.setProperty('--height', height + 'px');
+                        bar.style.animationDelay = (index * 0.02) + 's';
+
+                        if (height > 40) {
+                            bar.style.background = 'linear-gradient(to top, #ff0066, #ffcc00)';
+                        } else if (height > 25) {
+                            bar.style.background = 'linear-gradient(to top, #0066ff, #6600ff)';
+                        } else {
+                            bar.style.background = 'linear-gradient(to top, #0066ff, #00ffcc)';
+                        }
+                    });
+
+                    requestAnimationFrame(updateViz);
+                };
+
+                updateViz();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing Quantum Interface...');
+
+            setTimeout(() => {
+                const loadingSequence = document.getElementById('loadingSequence');
+                if (loadingSequence && !loadingSequence.classList.contains('hidden')) {
+                    console.log('Fallback: forcing interface completion');
+                    loadingSequence.style.display = 'none';
+                    const mainInterface = document.getElementById('mainInterface');
+                    if (mainInterface) {
+                        mainInterface.style.opacity = '1';
+                        mainInterface.style.transform = 'translateY(0)';
+                    }
+                }
+            }, 12000);
+
+            new QuantumInterface();
+        });
+    </script>
+</body>
+
+</html>
